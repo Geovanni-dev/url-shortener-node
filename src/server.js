@@ -20,14 +20,17 @@ app.use(express.urlencoded({ extended: true }));
 // Configura o EJS como template engine para renderizar as views
 app.set('view engine', 'ejs');
 
+
+const path = require('path');
+
+// Isso faz o Node sair da pasta 'src' e encontrar a 'public' na raiz
+app.use(express.static(path.join(__dirname, '../public')));
+
 // Injeta as rotas de encurtamento q criei no app
 app.use(urlRoutes);
 
-// Configura o EJS como template engine para renderizar as views
-app.set('view engine', 'ejs');
-
 // Define a porta do ambiente (Heroku/Render) ou a 3000 pra dev local
-port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000;
 
 // Sobe o servidor e deixa ele ouvindo as requs
 app.listen(port,() => {

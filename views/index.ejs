@@ -3,13 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Encurtador de URLs</title>
+    <link rel="stylesheet" href="/style.css">
+    <title>Encurtador de URLs</title>
 </head>
 <body>
-    <!-- Formulario simples para o usuario inserir a URL e enviar pro backend encurtar -->
-    <form action="/shorten" method="POST">
-        <input type="text" name="originalUrl" placeholder="Cole sua URL aqui" required>
-        <button type="submit">Encurtar</button>  
-    </form>
+    <div class="container">
+        <h1>Encurtador de URL</h1>
+
+        
+        <form action="/shorten" method="POST">
+            <input type="url" name="url" placeholder="Cole seu link aqui" required>
+            <br>
+            <button type="submit">Encurtar</button>
+        </form>
+
+        <% if (typeof linkCurto !== 'undefined' && linkCurto) { %>
+            <div class="success-msg">
+                <a href="<%= linkCurto %>" target="_blank" class="success-link">
+                    <%= linkCurto.replace('https://', '') %>
+                </a>
+            </div>
+        <% } %>
+    </div>
 </body>
 </html>
