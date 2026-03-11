@@ -66,6 +66,20 @@ npm start
   createdAt: Date       // Data de criação automática
 }
 ```
+## 🌐 Deploy no Render
+
+O projeto está hospedado no **Render** (plataforma cloud gratuita).
+
+👉 **Acesse a versão ao vivo:** [https://gr-u.onrender.com](https://gr-u.onrender.com)
+
+> ⚠️ *Nota: por estar no plano gratuito, o serviço pode "dormir" após períodos sem uso. Na primeira requisição, pode levar alguns segundos para reativar.*
+
+### ☁️ Por que escolhi o Render?
+
+- ✅ Deploy gratuito e simples
+- ✅ Integração direta com GitHub
+- ✅ Suporte nativo a Node.js
+- ✅ SSL automático (HTTPS)
 
 ## 📄 Licença
 
