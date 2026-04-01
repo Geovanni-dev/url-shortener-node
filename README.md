@@ -16,6 +16,7 @@ Interface web e API para encurtar links, redirecionar e monitorar acessos. Proje
 - **Node.js + Express** (Backend)
 - **EJS** (View Engine / Frontend)
 - **MongoDB + Mongoose** (Banco de dados)
+- **Zod** (Validação de dados e schemas)
 - **shortid** (Geração de IDs únicos)
 - **valid-url** (Validação de links)
 
@@ -23,21 +24,73 @@ Interface web e API para encurtar links, redirecionar e monitorar acessos. Proje
 
 ```
 encurtador-url/
-├── public/          # Arquivos estáticos (CSS, Imagens)
-├── views/           # Templates da interface (EJS)
-├── models/          # Schema do banco de dados (Mongoose)
-├── routes/          # Lógica de rotas e controle
-├── server.js        # Arquivo principal do servidor
-└── .env             # Variáveis de ambiente (Mongo URI)
+├── public/ # Arquivos estáticos (CSS, Imagens)
+├── views/ # Templates da interface (EJS)
+├── models/ # Schema do banco de dados (Mongoose)
+│ └── Url.js # Modelo de dados da URL
+├── routes/ # Definição das rotas
+│ └── urlRoutes.js # Rotas do encurtador
+├── controllers/ # Lógica de negócio
+│ └── urlController.js # Controlador com validação Zod
+├── middlewares/ # Middlewares personalizados
+│ └── validate.js # Middleware de validação Zod
+├── server.js # Arquivo principal do servidor
+└── .env # Variáveis de ambiente (Mongo URI)
 ```
 
-## 🧠 Como Funciona (Lógica de Apelido)
+## 🧠 Como Funciona (Lógica de Url personalizada)
 
 O sistema aceita um parâmetro opcional chamado `customUrl`:
 
-- **Sem Apelido:** O servidor gera um ID aleatório único (ex: `abc123`).
-- **Com Apelido:** O servidor valida se o apelido já existe no banco. Se estiver livre, o link curto assume esse nome.
+- **Sem Url personalizada:** O servidor gera um ID aleatório único (ex: `abc123`).
+- **Com Url personalizada:** O servidor valida se a Url personalizada já existe no banco. Se estiver livre, o link curto assume esse nome.
 - **Limpeza Automática:** O backend limpa espaços vazios e o HTML valida o formato para garantir que o link funcione em qualquer navegador.
+
+
+## 🔒 Validação com Zod
+
+O projeto utiliza **Zod** para validar todos os dados recebidos pela API:
+
+### Schemas de Validação
+
+```javascript
+// Validação de URL para encurtamento
+const shortenUrlSchema = z.object({
+  customUrl: z
+    .string()
+    .regex(
+      /^[a-zA-Z0-9_-]+$/,
+      "A URL personalizada só pode conter letras, números, hífens e underscores.",
+    ).optional().or(z.literal("")), // Permite que seja opcional ou uma string vazia
+});
+
+// Validação de URL para redirecionamento
+const redirectUrlSchema = z.object({
+  shortId: z.string().regex(
+    /^[a-zA-Z0-9_-]+$/,
+    "O ID da URL só pode conter letras, números, hífens e underscores.",
+  ),
+});
+````
+
+### Middleware de Validação
+
+````javascript
+// Middleware de validação com Zod - verifica se os dados da requisição estão de acordo com o schema do zod (Genérico)
+const validate = (schema) => {
+  return (req, res, next) => {
+    try {
+      schema.parse(req.body);
+      next();
+    } catch (error) {
+      return res.status(400).json({ 
+        error: 'Dados inválidos',
+        details: error.errors 
+      });
+    }
+  };
+};
+````
 
 ## 📦 Instalação e Uso
 
@@ -87,8 +140,4 @@ MIT © Geovani Rodrigues
 
 ---
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" />
-  <img src="https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white" />
-  <img src="https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white" />
-</p>
+<p align="center"> <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" /> <img src="https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white" /> <img src="https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white" /> <img src="https://img.shields.io/badge/EJS-8B5A2B?style=for-the-badge&logo=ejs&logoColor=white" /> <img src="https://img.shields.io/badge/Zod-3E6B9E?style=for-the-badge&logo=zod&logoColor=white" /> <img src="https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white" /> </p> 
